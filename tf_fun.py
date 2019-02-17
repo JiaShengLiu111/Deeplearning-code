@@ -11,7 +11,18 @@ import numpy as np
 from tensorflow.contrib.framework import arg_scope
 from tensorflow.contrib.layers import batch_norm
 
-#funtion list: conv、full-connection、pool、activation-function、dropout、bn etc.
+"""
+funtion list: 
+    conv、
+    full-connection、
+    pool(max_pool,avg_pool,global_avg_pool,global_avg_pool)、
+    activation-function、
+    dropout、
+    bn、
+    concat
+    
+    etc.
+"""
 
 class tf_fun:
     """
@@ -102,6 +113,29 @@ class tf_fun:
         """
         return tf.nn.max_pool(bottom, ksize=[1, kernel_size, kernel_size, 1], strides=[1, stride, stride, 1], padding=padding, name=layer_name) 
     
+    def global_avg_pool(self, bottom, layer_name, stride=1):
+        """
+       function:
+           golbal average pooling
+       parameters:
+           same as function avg_pool.
+       attention: padding is 'VALID' for global_pool
+        """
+        shape=bottom.get_shape()  # get the shape of bottom:(None,Row,Col,channel)
+        result = tf.nn.avg_pool(bottom, ksize=[1, 7, 7, 1], strides=[1, stride, stride, 1], padding='VALID', name=layer_name)
+        return result
+    
+    def global_max_pool(self, bottom, layer_name, stride=1): 
+        """ 
+       function:
+           golbal max pooling
+       parameters:
+           same as function max_pool. 
+       attention: padding is 'VALID' for global_pool
+        """
+        shape=bottom.get_shape()  # get the shape of bottom:(None,Row,Col,channel)
+        return tf.nn.max_pool(bottom, ksize=[1, shape[1], shape[2], 1], strides=[1, stride, stride, 1], padding='VALID', name=layer_name)
+    
     def drop_out(self, x, dropout_rate=0.2) :
         """
         function:
@@ -113,8 +147,8 @@ class tf_fun:
     
     def batch_normalization(self, bottom, scope_name):
         """
-        function:
-            batch normalization
+       function:
+           batch normalization 
         """
         with arg_scope([batch_norm],
                        scope=scope_name,
@@ -125,7 +159,58 @@ class tf_fun:
                        zero_debias_moving_mean=True,
                        reuse=tf.AUTO_REUSE) :
             return batch_norm(inputs=bottom, is_training=self.is_training)
+        
+    def concat(self,bottom,axis=3):
+        """
+        function:
+            Concatenation
+        parameters:
+            bottom:the list of tensor waitting to concat
+            axis:the concat channel 
+        remarks:
+            the bottom often is feature map which shaped like (None,Row,Col,Channel)，so the default value of axis is 3
+            represent that concat bottom from the 'channel'.
+        """
+        return tf.concat(bottom,axis=axis)
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     

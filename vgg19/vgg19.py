@@ -6,6 +6,8 @@ reload(sys)
 sys.stdin,sys.stdout,sys.stderr=stdi,stdo,stde 
 sys.setdefaultencoding('utf-8')   # 解决汉字编码问题
 
+import os
+sys.path.append(os.path.dirname(os.getcwd()))  # add the upper level directory into the pwd
 import tf_fun
 import tensorflow as tf
 
@@ -13,10 +15,18 @@ class Vgg19:
     """
     vgg19
     """
-    def __init__(self,is_training,class_num,dropout_rate=0.2):
+    def __init__(self,inputs,is_training,class_num,dropout_rate=0.2):
+        """
+        parameters:
+           inputs:the input of the network
+           is_training:trainable or not
+           class_num:the final class number
+           dropout_rate:dropout rate
+        """
         self.is_training=is_training
         self.class_num = class_num
         self.dropout_rate = dropout_rate
+        self.prob = self.build(inputs)
         
     def build(self,inputs):
         assert inputs.get_shape().as_list()[1:]==[224,224,3], 'the size of inputs is incorrect!'
@@ -96,8 +106,9 @@ class Vgg19:
         net = tf_op.drop_out(net,dropout_rate=self.dropout_rate)
         net = tf.nn.relu(net)
         net = tf_op.fc_layer(net, 4096, self.class_num, "fc8")
-        self.prob = tf.nn.softmax(net) 
-        print "the 6th stage-shape："+str(self.prob.shape)
+        result = tf.nn.softmax(net) 
+        print "the 6th stage-shape："+str(result.shape)
+        return result
         
         
         
