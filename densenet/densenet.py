@@ -16,19 +16,27 @@ class densenet:
     """
     densenet
     """
-    def __init__(self,inputs,is_training,class_num,dropout_rate=0.2):
+    def __init__(self,class_num,dropout_rate=0.2):
         """
-        parameters:
-           inputs:the input of the network
-           is_training:trainable or not
+        parameters: 
            class_num:the final class number
            dropout_rate:dropout rate
-        """
-        self.is_training=is_training
+        """ 
         self.class_num = class_num
         self.dropout_rate = dropout_rate 
+
+        # construct placeholder
+        self.inputs = tf.placeholder(tf.float32, [None, 224, 224, 3],name="inputs")  # the input of the network
+        self.labels = tf.placeholder(tf.float32, [None, self.class_num],name="labels")  # the labels of train sampels
+        self.is_training = tf.placeholder(tf.bool,name="is_training")  # trainable or not
+        
         self.tf_op = tf_fun.tf_fun(self.is_training)  
-        self.prob = self.build(inputs)
+
+        # build the network
+        self.prob = self.build(self.inputs)
+
+        # construct loss Function
+        self.cost = -tf.reduce_mean(self.labels*tf.log(tf.clip_by_value(self.prob,1e-10,1.0)))  
         
     def bottleneck_compositeLayer(self,bottom,layer_name):
         """
@@ -120,7 +128,7 @@ class densenet:
         in_size = shape[1]*shape[2]*shape[3]
         net = self.tf_op.fc_layer(net, int(in_size), self.class_num, "fc5") 
         net = tf_op.drop_out(net,dropout_rate=self.dropout_rate)
-        result = tf.nn.softmax(net)
+        result = tf.nn.softmax(net,name="prob")
         print "the 6th stage-shape："+str(result.shape)
         return result 
     

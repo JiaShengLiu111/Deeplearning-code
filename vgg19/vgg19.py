@@ -15,18 +15,25 @@ class Vgg19:
     """
     vgg19
     """
-    def __init__(self,inputs,is_training,class_num,dropout_rate=0.2):
+    def __init__(self,class_num,dropout_rate=0.2):
         """
         parameters:
-           inputs:the input of the network
-           is_training:trainable or not
            class_num:the final class number
            dropout_rate:dropout rate
-        """
-        self.is_training=is_training
+        """ 
         self.class_num = class_num
         self.dropout_rate = dropout_rate
-        self.prob = self.build(inputs)
+        
+        # construct placeholder
+        self.inputs = tf.placeholder(tf.float32, [None, 224, 224, 3],name="inputs")  # the input of the network
+        self.labels = tf.placeholder(tf.float32, [None, self.class_num],name="labels")  # the labels of train sampels
+        self.is_training = tf.placeholder(tf.bool,name="is_training")  # trainable or not
+        
+        # build the network
+        self.prob = self.build(self.inputs)
+        
+        # construct loss Function
+        self.cost = -tf.reduce_mean(self.labels*tf.log(tf.clip_by_value(self.prob,1e-10,1.0)))  
         
     def build(self,inputs):
         assert inputs.get_shape().as_list()[1:]==[224,224,3], 'the size of inputs is incorrect!'
@@ -106,10 +113,6 @@ class Vgg19:
         net = tf_op.drop_out(net,dropout_rate=self.dropout_rate)
         net = tf.nn.relu(net)
         net = tf_op.fc_layer(net, 4096, self.class_num, "fc8")
-        result = tf.nn.softmax(net) 
+        result = tf.nn.softmax(net,name="prob") 
         print "the 6th stage-shape："+str(result.shape)
         return result
-        
-        
-        
-        

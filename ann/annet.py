@@ -26,9 +26,9 @@ class Ann:
         self.dropout_rate = dropout_rate 
         
         # construct placeholder
-        self.inputs = tf.placeholder(tf.float32,[None,114])  # the input of the network
-        self.labels = tf.placeholder(tf.float32,[None,2])  # the labels of train sampels
-        self.is_training = tf.placeholder(tf.bool)  # trainable or not
+        self.inputs = tf.placeholder(tf.float32,[None,114],name="inputs")  # the input of the network
+        self.labels = tf.placeholder(tf.float32,[None,2],name="labels")  # the labels of train sampels
+        self.is_training = tf.placeholder(tf.bool,name="is_training")  # trainable or not
         
         # build the network
         self.prob = self.build(self.inputs)
@@ -55,4 +55,4 @@ class Ann:
         print "the 1th stage-shape："+str(net.shape)
         
         net = tf_op.fc_layer(net,250,2,"fc2")
-        return tf.nn.softmax(net)
+        return tf.nn.softmax(net,name="prob")
