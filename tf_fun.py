@@ -19,7 +19,8 @@ funtion list:
     activation-function、
     dropout、
     bn、
-    concat
+    concat、
+    depthwise_separable_conv
     
     etc.
 """
@@ -172,6 +173,42 @@ class tf_fun:
             represent that concat bottom from the 'channel'.
         """
         return tf.concat(bottom,axis=axis)
+
+    def depthwise_separable_conv(self,bottom,num_pwc_filters
+                                  ,width_multiplier,strides,scopename):
+        """
+        function:
+        	 Function to build the depth-wise separable convolution layer.
+        parameters:
+        	bottom:the list of tensor waitting to concat
+        	num_pwc_filters：the base channel of pointwise_convolution
+        	width_multiplier：the scale factor of the base channel of pointwise_convolution,\
+        					  namely, the channel of output is num_pwc_filters×width_multiplier：the
+        	strides：the stride of depthwise_convolution
+        	scopename：the name of depthwise_separable_conv layer
+        """
+
+        # the really channel of the final output
+        num_pwc_filters = round(num_pwc_filters * width_multiplier)  
+        """
+        depthwise convolution
+		Note1：skip pointwise by setting num_outputs=None
+        Note2：the separable_convolution2d don't need input the number of convolution kernels,\
+        because the number of convolution kernels equals to the channel of bottom  
+        """
+        depthwise_conv = slim.separable_convolution2d(bottom\
+                                         ,num_outputs=None,stride=strides,depth_multiplier=1\
+                                         ,activation_fn=None,padding='SAME'
+                                         ,kernel_size=[3, 3],scope=scopename+'/depthwise_conv')
+        bn = self.batch_normalization(depthwise_conv,scopename+"/dw_batch_norm")
+        bn = tf.nn.relu(bn)
+
+        # pointwise convolution
+        pointwise_conv = self.conv_layer(bn, kernel_num=num_pwc_filters, kernel_size=1, stride=1\
+                               , layer_name=scopename+'/pointwise_conv',padding='SAME')
+        bn = self.batch_normalization(pointwise_conv,scopename+"/pw_batch_norm")
+        bn = tf.nn.relu(bn)
+        return bn
 
     
     

@@ -12,7 +12,7 @@ import tf_fun
 import tensorflow as tf
 import densenet_config as cfg
 
-class densenet:
+class DenseNet-BC:
     """
     densenet
     """
@@ -99,11 +99,10 @@ class densenet:
         net = inputs
         print "start-shape："+str(inputs.shape)
         
-        tf_op = tf_fun.tf_fun(self.is_training)
-        net = tf_op.conv_layer(net, kernel_num=2*cfg.growth_rate, kernel_size=7, stride=2, layer_name="conv1",padding='SAME')
+        net = self.tf_op.conv_layer(net, kernel_num=2*cfg.growth_rate, kernel_size=7, stride=2, layer_name="conv1",padding='SAME')
         net = self.tf_op.batch_normalization(net,scope_name="bn1")
         net = tf.nn.relu(net) 
-        net = tf_op.max_pool(net,layer_name="pool1", kernel_size=3, stride=2, padding='SAME')
+        net = self.tf_op.max_pool(net,layer_name="pool1", kernel_size=3, stride=2, padding='SAME')
         print "the 1th stage-shape："+str(net.shape)
         
         net = self.dense_block(net,6,"denseblock1") 
@@ -127,7 +126,7 @@ class densenet:
         shape = net.get_shape()
         in_size = shape[1]*shape[2]*shape[3]
         net = self.tf_op.fc_layer(net, int(in_size), self.class_num, "fc5") 
-        net = tf_op.drop_out(net,dropout_rate=self.dropout_rate)
+        net = self.tf_op.drop_out(net,dropout_rate=self.dropout_rate)
         result = tf.nn.softmax(net,name="prob")
         print "the 6th stage-shape："+str(result.shape)
         return result 
