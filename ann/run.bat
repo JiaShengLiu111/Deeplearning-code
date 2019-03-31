@@ -1,1 +1,0 @@
-python main.py ./Datas/negative.xml ./Datas/positive.xml ./Datas/TestNeg.xml ./Datas/TestPos.xml /notebooks/17_LJS/model/Why/ANN/model_2
