@@ -56,3 +56,4 @@ class Ann:
         
         net = tf_op.fc_layer(net,250,2,"fc2")
         return tf.nn.softmax(net,name="prob")
+        

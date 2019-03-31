@@ -131,5 +131,3 @@ class DenseNet-BC:
         print "the 6th stage-shape："+str(result.shape)
         return result 
     
-    
-    
