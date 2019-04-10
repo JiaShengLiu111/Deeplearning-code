@@ -123,7 +123,7 @@ class tf_fun:
        attention: padding is 'VALID' for global_pool
         """
         shape=bottom.get_shape()  # get the shape of bottom:(None,Row,Col,channel)
-        result = tf.nn.avg_pool(bottom, ksize=[1, 7, 7, 1], strides=[1, stride, stride, 1], padding='VALID', name=layer_name)
+        result = tf.nn.avg_pool(bottom, ksize=[1, shape[1], shape[2], 1], strides=[1, stride, stride, 1], padding='VALID', name=layer_name)
         return result
     
     def global_max_pool(self, bottom, layer_name, stride=1): 
