@@ -10,6 +10,7 @@ import tensorflow as tf
 import numpy as np
 from tensorflow.contrib.framework import arg_scope
 from tensorflow.contrib.layers import batch_norm
+import tensorflow.contrib.slim as slim
 
 """
 funtion list: 
