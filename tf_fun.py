@@ -178,21 +178,21 @@ class tf_fun:
                                   ,width_multiplier,strides,scopename):
         """
         function:
-        	 Function to build the depth-wise separable convolution layer.
+            Function to build the depth-wise separable convolution layer.
         parameters:
-        	bottom:the list of tensor waitting to concat
-        	num_pwc_filters：the base channel of pointwise_convolution
-        	width_multiplier：the scale factor of the base channel of pointwise_convolution,\
-        					  namely, the channel of output is num_pwc_filters×width_multiplier：the
-        	strides：the stride of depthwise_convolution
-        	scopename：the name of depthwise_separable_conv layer
+            bottom:the list of tensor waitting to concat
+            num_pwc_filters：the base channel of pointwise_convolution
+            width_multiplier：the scale factor of the base channel of pointwise_convolution,\
+                        namely, the channel of output is num_pwc_filters×width_multiplier：the
+        strides：the stride of depthwise_convolution
+        scopename：the name of depthwise_separable_conv layer
         """
 
         # the really channel of the final output
         num_pwc_filters = round(num_pwc_filters * width_multiplier)  
         """
         depthwise convolution
-		Note1：skip pointwise by setting num_outputs=None
+        Note1：skip pointwise by setting num_outputs=None
         Note2：the separable_convolution2d don't need input the number of convolution kernels,\
         because the number of convolution kernels equals to the channel of bottom  
         """
