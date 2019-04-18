@@ -77,7 +77,8 @@ class MobileNetV1:
         net = self.tf_op.depthwise_separable_conv(net,1024,self.width_multiplier,strides=1,scopename='conv_ds_14')
         print ("the 3th stage-shape："+str(net.shape))
         
-        net = self.tf_op.avg_pool(net, "avg_pool_15", kernel_size=7, stride=1, padding='VALID')
+        # net = self.tf_op.avg_pool(net, "avg_pool_15", kernel_size=7, stride=1, padding='VALID')
+        net = self.tf_op.global_avg_pool(net, "global_avg_pool_15", stride=1)
         print ("the 4th stage-shape："+str(net.shape))
         
         net = self.tf_op.fc_layer(net, 1024, 1024, "fc16")

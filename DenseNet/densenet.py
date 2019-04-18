@@ -12,7 +12,7 @@ import tf_fun
 import tensorflow as tf
 import densenet_config as cfg
 
-class DenseNet-BC:
+class DenseNet_BC:
     """
     densenet
     """
