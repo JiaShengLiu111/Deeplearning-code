@@ -71,12 +71,12 @@ class ResNet50:
         net3_channel = net3.get_shape()[-1]
         if bottom_channel!=net3_channel:
             tmp = self.tf_op.conv_layer(bottom, net3_channel, kernel_size=1, stride=stride, layer_name=block_name+"/conv4",padding='VALID')
-            tmp = self.tf_op.batch_normalization(tmp, scope_name=block_name+"/bn4") 
         else:
             tmp = bottom
         
         # identity
         net4 = tf.add(net3,tmp)
+        net4 = self.tf_op.batch_normalization(net4, scope_name=block_name+"/bn4") 
         net4 = tf.nn.relu(net4)
         return net4  
 
@@ -85,13 +85,13 @@ class ResNet50:
         function:
             build the mobilenet-v1 network
         """
-        assert inputs.get_shape().as_list()[1:]==[112,112,3], 'the size of inputs is incorrect!'
+        assert inputs.get_shape().as_list()[1:]==[224,224,3], 'the size of inputs is incorrect!'
         
         # start to build the model
         net = inputs 
         print ("start-shape:"+str(net.shape))
         
-        net = self.tf_op.conv_layer(net, kernel_num=64, kernel_size=7, stride=1, layer_name="conv1",padding='SAME')
+        net = self.tf_op.conv_layer(net, kernel_num=64, kernel_size=7, stride=2, layer_name="conv1",padding='SAME')
         print ("the 0th stage-shape："+str(net.shape))
         
         net = self.tf_op.max_pool(net, layer_name="pool1", kernel_size=3, stride=2, padding='SAME')
