@@ -66,13 +66,12 @@ class ResNet50:
         net3 = self.tf_op.conv_layer(net2, conv11_channel2, kernel_size=1, stride=1, layer_name=block_name+"/conv3",padding='VALID')
         net3 = self.tf_op.batch_normalization(net3, scope_name=block_name+"/bn3")
         
-        # Ensure that the channel of bottom and net3 are equal
-        bottom_channel = bottom.get_shape()[-1]
-        net3_channel = net3.get_shape()[-1]
-        if bottom_channel!=net3_channel:
+        # Ensure that the shape of bottom and net3 are equal 
+        if bottom.shape[1:4]!=net3.shape[1:4]:
             tmp = self.tf_op.conv_layer(bottom, net3_channel, kernel_size=1, stride=stride, layer_name=block_name+"/conv4",padding='VALID')
         else:
             tmp = bottom
+        assert net3.shape[1:4]==tmp.shape[1:4], "net3 and tmp have different shapes！"
         
         # identity
         net4 = tf.add(net3,tmp)
@@ -83,7 +82,7 @@ class ResNet50:
     def build(self,inputs,scope="MobileNetV1"): 
         """
         function:
-            build the mobilenet-v1 network
+            build the ResNet50 network
         """
         assert inputs.get_shape().as_list()[1:]==[224,224,3], 'the size of inputs is incorrect!'
         
