@@ -10,8 +10,8 @@ reload(sys)
 sys.stdin,sys.stdout,sys.stderr=stdi,stdo,stde 
 sys.setdefaultencoding('utf-8')   # 解决汉字编码问题
 
-import os
-sys.path.append(os.path.dirname(os.getcwd()))  # add the upper level directory into the pwd
+# import os
+# sys.path.append(os.path.dirname(os.getcwd()))  # add the upper level directory into the pwd
 import tf_fun
 import tensorflow as tf
 import tensorflow.contrib.slim as slim
@@ -31,7 +31,7 @@ class ResNet50:
         self.dropout_rate = dropout_rate 
         
         # construct placeholder
-        self.inputs = tf.placeholder(tf.float32, [None, 112, 112, 3],name="inputs")  # the input of the network
+        self.inputs = tf.placeholder(tf.float32, [None, 224, 224, 3],name="inputs")  # the input of the network
         self.labels = tf.placeholder(tf.float32, [None, self.class_num],name="labels")  # the labels of train sampels
         self.is_training = tf.placeholder(tf.bool,name="is_training")  # trainable or not
         
@@ -67,6 +67,7 @@ class ResNet50:
         net3 = self.tf_op.batch_normalization(net3, scope_name=block_name+"/bn3")
         
         # Ensure that the shape of bottom and net3 are equal 
+        net3_channel = net3.get_shape()[-1]
         if bottom.shape[1:4]!=net3.shape[1:4]:
             tmp = self.tf_op.conv_layer(bottom, net3_channel, kernel_size=1, stride=stride, layer_name=block_name+"/conv4",padding='VALID')
         else:
@@ -110,7 +111,7 @@ class ResNet50:
         print ("the 3th stage-shape："+str(net.shape))
         
         # the third ResNet block
-        for i in range(6):
+        for i in range(23):
             s = 2 if i==0 else 1
             net = self.bottleneck(net,256,256,1024,block_name="bottleneck4_"+str(i),stride=s)
         print ("the 4th stage-shape："+str(net.shape))
@@ -127,5 +128,3 @@ class ResNet50:
         result = tf.nn.softmax(net,name="prob")
         print ("the 6th stage-shape："+str(result.shape))
         return result
-                
-                
