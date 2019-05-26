@@ -23,6 +23,7 @@ from sklearn.metrics import precision_score
 from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import train_test_split 
 import os
+from keras import backend as K
 
 class DataEnhance():
     """
@@ -351,19 +352,27 @@ class utils():
         time_end = time.time()
         return np.array(result),time_end-time_start-ReadDataTime
     
-    def calculate_learning_rate(self,lr,counter,decay_step,decay_rate):
+    def lr_exponential_decay(self,model,lr,counter,decay_step,decay_rate):
         """
        function:
            根据当前学习率lr、当前训练batch数counter、学习率衰减步长decay_step、学习率衰减率decay_rate计算新的学习率
+           并更新学习率。
+           参考至：https://stackoverflow.com/questions/53609972/keras-how-to-use-learning-rate-decay-with-model-train-on-batch
        parameters:
+           model:当前Keras模型
            lr:当前学习率
            counter:batch计数器
            decay_step:学习率衰减步长
            decay_rate:学习率衰减率
         """
+        # calculate learning rate
         if counter!=0 and counter%decay_step==0:
-            lr = lr*decay_rate
-        return lr
+            current_learning_rate = lr*decay_rate
+        else:
+            current_learning_rate = lr
+        # set new lr
+        K.set_value(model.optimizer.lr, current_learning_rate)  # set new lr
+        return model
    
     def analyResult(self,labels,predicts):
         """
