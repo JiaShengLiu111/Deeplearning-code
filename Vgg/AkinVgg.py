@@ -7,12 +7,12 @@ from __future__ import print_function
 import sys 
 stdi,stdo,stde=sys.stdin,sys.stdout,sys.stderr 
 reload(sys) 
-sys.stdin,sys.stdout,sys.stderr=stdi,stdo,stde a
+sys.stdin,sys.stdout,sys.stderr=stdi,stdo,stde
 sys.setdefaultencoding('utf-8')   # 解决汉字编码问题
 
-import os
-sys.path.append(os.path.dirname(os.getcwd()))  # add the upper level directory into the pwd
-import tf_fun
+# import os
+# sys.path.append(os.path.dirname(os.getcwd()))  # add the upper level directory into the pwd
+# import tf_fun
 import tensorflow as tf
 import tensorflow.contrib.slim as slim
 
@@ -35,7 +35,7 @@ class AkinVgg:
         self.width_multiplier = width_multiplier
         
         # construct placeholder
-        self.inputs = tf.placeholder(tf.float32, [None, 128, 128, 3])  # the input of the network
+        self.inputs = tf.placeholder(tf.float32, [None, 112, 112, 3])  # the input of the network
         self.labels = tf.placeholder(tf.float32, [None, self.class_num])  # the labels of train sampels
         self.is_training = tf.placeholder(tf.bool)  # trainable or not
         
@@ -46,7 +46,7 @@ class AkinVgg:
         self.cost = -tf.reduce_mean(self.labels*tf.log(tf.clip_by_value(self.prob,1e-10,1.0)))  
 
     def build(self,inputs,scope="MobileNetV1"): 
-        assert inputs.get_shape().as_list()[1:]==[128,128,3], 'the size of inputs is incorrect!'
+        assert inputs.get_shape().as_list()[1:]==[112,112,3], 'the size of inputs is incorrect!'
         
         # start to build the model
         net = inputs 
@@ -100,12 +100,12 @@ class AkinVgg:
         print ("the 4th stage-shape："+str(net.shape))
         
         # 第五区
-        net = tf_op.fc_layer(net, 8*8*64, 128, "fc5")
+        net_shape = net.shape
+        net = tf_op.fc_layer(net, int(net_shape[1])*int(net_shape[2])*int(net_shape[3]), 128, "fc5")
         net = tf_op.drop_out(net,dropout_rate=self.dropout_rate)
         net = tf.nn.relu(net)
         net = tf_op.fc_layer(net, 128, self.class_num, "fc6")
-        result = tf.nn.softmax(net,name="prob")
-        print (result)
+        result = tf.nn.softmax(net,name="prob") 
         print ("the 5th stage-shape："+str(result.shape))
         return result
        

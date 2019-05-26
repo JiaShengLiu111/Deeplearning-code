@@ -253,8 +253,8 @@ class utils():
         # 求probs中元素的最大值索引下标
         result = []
         for i in range(len(probs)):
-            prob = probs[i]
-            max_index = index(max(prob))
+            prob = list(probs[i])
+            max_index = prob.index(max(prob))
             result.append(max_index)
         result = np.array(result)
         return result 
@@ -315,6 +315,37 @@ class utils():
             read_time = read_end - read_start
             ReadDataTime = ReadDataTime + read_time  # 累计读取磁盘数据的时间 
             result_tmp = sess.run(sess_op,feed_dict={inputs_placeholder:XX,is_training_placeholder:False}) 
+            result_tmp = list(result_tmp)
+            result = result+result_tmp 
+        time_end = time.time()
+        return np.array(result),time_end-time_start-ReadDataTime
+    
+    def predict_keras(self,model,X_input,batch_size,dataenhance,reDir):
+        """
+       function:
+           调用tensorflow模型对X_input进行预测，返回预测结果，并统计预测所消耗的时长
+       parameters:
+           model:Keras模型
+           X_input:待预测样本的路径集合
+           batch_size:对X_input进行逐batch预测所采用的batch_size大小
+           dataenhance:DataEnhance实例，用于读取样本
+           reDir:输出信息文件
+        """
+        ReadDataTime = 0  # 用于记录访问磁盘读取数据的时间
+        time_start = time.time()  # 起始时间
+        result = []
+        for i in range(0,len(X_input),batch_size):
+            if i%100==0:
+                self.printRd("myPredicts:"+str(i),reDir)
+            start = i
+            end = min(start+batch_size,len(X_input))  
+            read_start = time.time()
+            XX = dataenhance.getMiniBatch4TestAndVal(X_input[start:end])  # 访问磁盘读取文件耗时
+            read_end = time.time()
+            read_time = read_end - read_start
+            ReadDataTime = ReadDataTime + read_time  # 累计读取磁盘数据的时间 
+            # result_tmp = sess.run(sess_op,feed_dict={inputs_placeholder:XX,is_training_placeholder:False}) 
+            result_tmp = model.predict_on_batch(XX)
             result_tmp = list(result_tmp)
             result = result+result_tmp 
         time_end = time.time()
