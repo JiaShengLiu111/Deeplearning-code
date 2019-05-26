@@ -350,6 +350,20 @@ class utils():
             result = result+result_tmp 
         time_end = time.time()
         return np.array(result),time_end-time_start-ReadDataTime
+    
+    def calculate_learning_rate(self,lr,counter,decay_step,decay_rate):
+        """
+       function:
+           根据当前学习率lr、当前训练batch数counter、学习率衰减步长decay_step、学习率衰减率decay_rate计算新的学习率
+       parameters:
+           lr:当前学习率
+           counter:batch计数器
+           decay_step:学习率衰减步长
+           decay_rate:学习率衰减率
+        """
+        if counter!=0 and counter%decay_step==0:
+            lr = lr*decay_rate
+        return lr
    
     def analyResult(self,labels,predicts):
         """
