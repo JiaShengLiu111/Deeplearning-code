@@ -197,7 +197,7 @@ class utils():
     """
     读取图片、调用模型进行预测、计算样本真实标签、绘制准确率/损失函数变化曲线等。
     """
-    def __init__(self):
+    def __init__(self): 
         pass
     
     def printRd(self,value,filepath='info/info.txt',mode="a+"):  
@@ -285,7 +285,7 @@ class utils():
         plt.clf()  
         plt.close() 
 
-    def predicts(self,sess,sess_op,inputs_placeholder,is_training_placeholder,X_input,batch_size,reDir):
+    def predicts(self,sess,sess_op,inputs_placeholder,is_training_placeholder,X_input,batch_size,dataenhance,reDir):
         """
        functions:
            调用tf模型对X_input进行预测，返回预测结果，并统计预测所消耗的时长
@@ -296,6 +296,7 @@ class utils():
            is_training_placeholder:表示训练状态的placeholder
            X_input:待预测样本的路径集合
            batch_size:对X_input进行逐batch预测所采用的batch_size大小
+           dataenhance:DataEnhance实例，用于读取样本
            reDir:输出信息文件
        returns:
            X_input所对应的预测结果列表、预测所有样本所消耗的总时间
@@ -305,15 +306,15 @@ class utils():
         result = []
         for i in range(0,len(X_input),batch_size):
             if i%100==0:
-                self,printRd("myPredicts:"+str(i),reDir)
+                self.printRd("myPredicts:"+str(i),reDir)
             start = i
             end = min(start+batch_size,len(X_input))  
             read_start = time.time()
-            XX = getMiniBatch4TestAndVal(X_input[start:end])  # 访问磁盘读取文件耗时
+            XX = dataenhance.getMiniBatch4TestAndVal(X_input[start:end])  # 访问磁盘读取文件耗时
             read_end = time.time()
             read_time = read_end - read_start
             ReadDataTime = ReadDataTime + read_time  # 累计读取磁盘数据的时间 
-            result_tmp = sess.run(sess_op,feed_dict={images:XX,train_mode:False}) 
+            result_tmp = sess.run(sess_op,feed_dict={inputs_placeholder:XX,is_training_placeholder:False}) 
             result_tmp = list(result_tmp)
             result = result+result_tmp 
         time_end = time.time()
