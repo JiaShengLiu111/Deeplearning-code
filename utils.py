@@ -372,7 +372,7 @@ class utils():
             current_learning_rate = lr
         # set new lr
         K.set_value(model.optimizer.lr, current_learning_rate)  # set new lr
-        return model
+        return model,lr
    
     def analyResult(self,labels,predicts):
         """
