@@ -1,4 +1,11 @@
 # _*_ coding:utf-8 _*_
+# coding=utf-8
+import sys 
+stdi,stdo,stde=sys.stdin,sys.stdout,sys.stderr 
+reload(sys) 
+sys.stdin,sys.stdout,sys.stderr=stdi,stdo,stde 
+sys.setdefaultencoding('utf-8')   # 解决汉字编码问题
+
 import skimage
 import skimage.io
 import skimage.transform
@@ -14,6 +21,8 @@ from sklearn.metrics import accuracy_score
 from sklearn.metrics import recall_score
 from sklearn.metrics import precision_score  
 from sklearn.metrics import confusion_matrix
+from sklearn.model_selection import train_test_split 
+import os
 
 class DataEnhance():
     """
@@ -23,7 +32,7 @@ class DataEnhance():
     2、https://blog.csdn.net/guduruyu/article/details/70842142
     3、https://blog.csdn.net/qq_23301703/article/details/79908988
     """
-    def __init__(self,path,image_h = 112,image_w = 112,crop_rate=0.875):
+    def __init__(self,image_h = 112,image_w = 112,crop_rate=0.875):
         """
        image_h,image_w用于（通过resize函数）限定图片的长和宽 
         """
@@ -88,7 +97,7 @@ class DataEnhance():
         light_factors = [0.75 + i * 0.05 for i in range(10)]
         light_factor = random.choice(light_factors)
         img = img.point(lambda i : i * light_factor)
-        rerturn img
+        return img
 
     def dataEnhance(self,img,rate):
         """
@@ -188,7 +197,7 @@ class utils():
     """
     读取图片、调用模型进行预测、计算样本真实标签、绘制准确率/损失函数变化曲线等。
     """
-    def __init__():
+    def __init__(self):
         pass
     
     def printRd(self,value,filepath='info/info.txt',mode="a+"):  
@@ -276,7 +285,7 @@ class utils():
         plt.clf()  
         plt.close() 
 
-    def myPredicts(self,sess,sess_op,inputs_placeholder,is_training_placeholder,X_input,batch_size,reDir):
+    def predicts(self,sess,sess_op,inputs_placeholder,is_training_placeholder,X_input,batch_size,reDir):
         """
        functions:
            调用tf模型对X_input进行预测，返回预测结果，并统计预测所消耗的时长
@@ -296,7 +305,7 @@ class utils():
         result = []
         for i in range(0,len(X_input),batch_size):
             if i%100==0:
-                printRd("myPredicts:"+str(i),reDir)
+                self,printRd("myPredicts:"+str(i),reDir)
             start = i
             end = min(start+batch_size,len(X_input))  
             read_start = time.time()
@@ -416,7 +425,7 @@ class utils():
           y:待截取的类表（标签）
           num:截取的样本数量
         """
-        randIndex_inTrain = random_without_same(0,len(X),num)
+        randIndex_inTrain = self.random_without_same(0,len(X),num)
         X_crop = []
         y_crop = []
         for i in range(len(randIndex_inTrain)):
@@ -425,7 +434,7 @@ class utils():
             y_crop.append(y[index])
         return X_crop,y_crop
     
-    def getSamplesDir(filepath,labels):
+    def getSamplesDir(self,filepath,labels):
         """
         function:
             返回所有子目录labels[x]下所有文件的路径
