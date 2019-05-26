@@ -367,7 +367,7 @@ class utils():
         # calculate learning rate
         if counter!=0 and counter%decay_step==0:
             lr = K.get_value(model.optimizer.lr)  # 获取模型当前学习率
-            K.set_value(model.optimizer.lr, lr*decay_rate)  # set new lr b
+            K.set_value(model.optimizer.lr, lr*decay_rate)  # set new lr
         return model
    
     def analyResult(self,labels,predicts):
