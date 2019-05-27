@@ -106,7 +106,7 @@ class ResNet34:
         print ("the 3th stage-shape："+str(net.shape))
         
         # the third ResNet block
-        for i in range(23):
+        for i in range(6):
             s = 2 if i==0 else 1
             net = self.bottleneck(net,256,256,block_name="bottleneck4_"+str(i),stride=s)
         print ("the 4th stage-shape："+str(net.shape))
