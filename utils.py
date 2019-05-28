@@ -393,6 +393,24 @@ class utils():
         print("f1值： "+str(round(f1_score_tmp,5))) 
         return accuracy,precision_tmp,recall_score_tmp,f1_score_tmp
     
+  def analyResult_confusion_matrix(self,confusion_matrix):
+        """
+       function:
+           根据混淆矩阵计算：准确率、精确率、召回率、F1分数等。
+       parameters:
+           confusion_matrix:混淆矩阵
+        """
+        confusion_matrix = np.array(confusion_matrix)
+        # 根据混淆生成等效的标签列表labels、预测结果列表predicts
+        labels = []
+        for i in range(len(confusion_matrix)):
+            labels = labels + [i]*sum(confusion_matrix[i])
+        predicts = []
+        for i in range(confusion_matrix.shape[0]):
+            for j in range(confusion_matrix.shape[1]):
+                predicts = predicts + [j]*confusion_matrix[i][j]
+        return self.analyResult(labels,predicts)
+
     def myShuffle(self,inputs,random_state=888):
         """
        function:
