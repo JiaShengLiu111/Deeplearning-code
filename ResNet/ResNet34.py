@@ -31,7 +31,7 @@ class ResNet34:
         self.dropout_rate = dropout_rate 
         
         # construct placeholder
-        self.inputs = tf.placeholder(tf.float32, [None, 112, 112, 3],name="inputs")  # the input of the network
+        self.inputs = tf.placeholder(tf.float32, [None, 224, 224, 3],name="inputs")  # the input of the network
         self.labels = tf.placeholder(tf.float32, [None, self.class_num],name="labels")  # the labels of train sampels
         self.is_training = tf.placeholder(tf.bool,name="is_training")  # trainable or not
         
@@ -80,13 +80,13 @@ class ResNet34:
         function:
             build the ResNet34 network
         """
-        assert inputs.get_shape().as_list()[1:]==[112,112,3], 'the size of inputs is incorrect!'
+        assert inputs.get_shape().as_list()[1:]==[224,224,3], 'the size of inputs is incorrect!'
         
         # start to build the model
         net = inputs 
         print ("start-shape:"+str(net.shape))
         
-        net = self.tf_op.conv_layer(net, kernel_num=64, kernel_size=7, stride=1, layer_name="conv1",padding='SAME')
+        net = self.tf_op.conv_layer(net, kernel_num=64, kernel_size=7, stride=2, layer_name="conv1",padding='SAME')
         print ("the 0th stage-shape："+str(net.shape))
         
         net = self.tf_op.max_pool(net, layer_name="pool1", kernel_size=3, stride=2, padding='SAME')
