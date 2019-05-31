@@ -67,7 +67,7 @@ class ResNet34:
             tmp = self.tf_op.conv_layer(bottom, net2_channel, kernel_size=1, stride=stride, layer_name=block_name+"/conv3",padding='SAME')
         else:
             tmp = bottom
-        assert net2.shape[1:4]==tmp.shape[1:4], "net3 and tmp have different shapes！"
+        assert net2.shape[1:4]==tmp.shape[1:4], "net2 and tmp have different shapes！"
         
         # identity
         net3 = tf.add(net2,tmp)
