@@ -53,7 +53,7 @@ class ResNet50:
            conv33_channe:the number of the channel of the conv(3×3)
            conv11_channel2:the number of the channel of the second conv(1×1)
            block_name:the name of the bottleneck
-           strides：the stride of conv(1×1)
+           strides：the stride of the first conv(1×1) of the bottleneck
         """
         net1 = self.tf_op.conv_layer(bottom, conv11_channel1, kernel_size=1, stride=stride, layer_name=block_name+"/conv1",padding='VALID')
         net1 = self.tf_op.batch_normalization(net1, scope_name=block_name+"/bn1")
