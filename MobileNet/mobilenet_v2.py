@@ -43,7 +43,7 @@ class MobileNetV2:
         # construct loss Function
         self.cost = -tf.reduce_mean(self.labels*tf.log(tf.clip_by_value(self.prob,1e-10,1.0)))  
 
-    def bottleneck(sef,bottom,expansion_ratio,output_dim,block_name,stride=1):
+    def bottleneck(self,bottom,expansion_ratio,output_dim,block_name,stride=1):
         """
         function:
             the bottleneck of mobilenetv2:pw->dw->pw&linear
@@ -62,7 +62,7 @@ class MobileNetV2:
         net1 = tf.nn.relu(net1)
         
         # dw
-        net2 = slim.separable_convolution2d(net1,num_outputs=None,stride=strides,depth_multiplier=1\
+        net2 = slim.separable_convolution2d(net1,num_outputs=None,stride=stride,depth_multiplier=1\
                                  ,activation_fn=None,padding='SAME',kernel_size=[3, 3],scope=block_name+'/dw')
         net2 = self.tf_op.batch_normalization(net2, scope_name=block_name+"/bn2")
         net2 = tf.nn.relu(net2)
@@ -101,45 +101,45 @@ class MobileNetV2:
         print ("the 1th stage-shape£º"+str(net.shape))
         
         # the 1 block of MobileNetV2
-        for i range(1):
+        for i in range(1):
             # s = 2 if i==0 else 1 
             s = 1  # all the layers in the block with the stride 1
             net = self.bottleneck(net,1,round(16 * cfg.width_multiplier),block_name="bottleneck2_"+str(i),stride=s)
         print ("the 2th stage-shape£º"+str(net.shape))
         
         # the 2 block of MobileNetV2
-        for i range(2):
+        for i in range(2):
             s = 2 if i==0 else 1
             net = self.bottleneck(net,cfg.expansion_ratio,round(24 * cfg.width_multiplier),block_name="bottleneck3_"+str(i),stride=s)
         print ("the 3th stage-shape£º"+str(net.shape))
         
         # the 3 block of MobileNetV2
-        for i range(3):
+        for i in range(3):
             s = 2 if i==0 else 1
             net = self.bottleneck(net,cfg.expansion_ratio,round(32 * cfg.width_multiplier),block_name="bottleneck4_"+str(i),stride=s)
         print ("the 4th stage-shape£º"+str(net.shape))
         
         # the 4 block of MobileNetV2
-        for i range(4):
+        for i in range(4):
             s = 2 if i==0 else 1
             net = self.bottleneck(net,cfg.expansion_ratio,round(64 * cfg.width_multiplier),block_name="bottleneck5_"+str(i),stride=s)
         print ("the 5th stage-shape£º"+str(net.shape))
         
         # the 5 block of MobileNetV2
-        for i range(3):
+        for i in range(3):
             # s = 2 if i==0 else 1
             s = 1  # all the layers in the block with the stride 1
             net = self.bottleneck(net,cfg.expansion_ratio,round(96 * cfg.width_multiplier),block_name="bottleneck6_"+str(i),stride=s)
         print ("the 6th stage-shape£º"+str(net.shape))
         
         # the 6 block of MobileNetV2
-        for i range(3):
+        for i in range(3):
             s = 2 if i==0 else 1 
             net = self.bottleneck(net,cfg.expansion_ratio,round(160 * cfg.width_multiplier),block_name="bottleneck7_"+str(i),stride=s)
         print ("the 7th stage-shape£º"+str(net.shape))
         
         # the 7 block of MobileNetV2
-        for i range(1):
+        for i in range(1):
             # s = 2 if i==0 else 1 
             s = 1  # all the layers in the block with the stride 1
             net = self.bottleneck(net,cfg.expansion_ratio,round(320 * cfg.width_multiplier),block_name="bottleneck8_"+str(i),stride=s)
