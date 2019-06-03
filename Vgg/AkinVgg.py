@@ -10,9 +10,9 @@ reload(sys)
 sys.stdin,sys.stdout,sys.stderr=stdi,stdo,stde
 sys.setdefaultencoding('utf-8')   # 解决汉字编码问题
 
-# import os
-# sys.path.append(os.path.dirname(os.getcwd()))  # add the upper level directory into the pwd
-# import tf_fun
+import os
+sys.path.append(os.path.dirname(os.getcwd()))  # add the upper level directory into the pwd
+import tf_fun
 import tensorflow as tf
 import tensorflow.contrib.slim as slim
 
