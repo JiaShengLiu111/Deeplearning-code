@@ -75,7 +75,7 @@ class ResNet34:
         # 注意：add操作之后不能使用BN，这里BN改变了“identity”分支的分布，影响了信息的传递，在训练的时候会阻碍loss的下降
         参考网址：https://blog.csdn.net/chenyuping333/article/details/82344334
         """
-        # net4 = self.tf_op.batch_normalization(net4, scope_name=block_name+"/bn4") 
+        # net3 = self.tf_op.batch_normalization(net3, scope_name=block_name+"/bn4") 
         net3 = tf.nn.relu(net3)
         return net3  
 
