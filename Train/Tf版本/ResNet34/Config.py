@@ -25,9 +25,9 @@ loadmodel_name = None  # 预训练模型名称
 saveStepEpochRate = 0.07  # 表示每训练saveStepEpochRate*epoch时，判断并保存一次最优模型
 
 # the parameters of ptimizer
-lr = 1e-2
-lr_decay_step = 29693
-lr_decay_rate = 0.94
+lr = 1e-3  # 初始学习率
+lr_decay_times = 4  # （训练过程中）学习率衰减次数
+lr_decay_rate = 0.94  # 学习率指数衰减率
 
   
 
