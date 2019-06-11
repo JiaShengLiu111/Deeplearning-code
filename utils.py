@@ -521,5 +521,32 @@ class utils():
             result = result + list(allfile_fullpath)
         return result
 
+        def writeCurveValue(self,lists,names,txtFullPath):
+	        """
+	       function:
+	           将模型训练曲线值写入文件：准确率、F1分数、损失函数等的列表总长度、最大值等。
+	       parameters:
+	           lists:二维列表，每一个维度表示某一个动态变化的数据，例如准确率或F1分数或损失函数，和names列表中元素一一对应
+	           names:一维列表，和lists中的元素一一对应，表示lists中某一维度数据所表示的含义。
+	           txtFullPath:保存文件的全路径。
+	        """
+	        assert len(lists)==len(names),"writeCurveValue中数据的长度和标签的长度不相等"
+	        utils.printRd("",txtFullPath,"w+")  # 清空txtFullPath文件
+	        
+	        for i in range(len(lists)):  # 依次对lists中的每一维数据进行处理
+	            # 获取某一维数据的值和名称
+	            list_ = lists[i]
+	            name = names[i] 
+	            max_ = max(list_)  # 获取该维度的最大值
+	            index_ = list(list_).index(max_)  # 获取最大值所在的索引
+	            
+	            # 写入文件（追加模式）
+	            utils.printRd(name+":",txtFullPath,"a+")  # 写入列表名
+	            utils.printRd(str(list_),txtFullPath,"a+")  # 写入列表值
+	            utils.printRd("length="+str(len(list(list_))),txtFullPath,"a+")  # 写入列表总长度
+	            utils.printRd("index="+str(index_)+"   max="+str(max_),txtFullPath,"a+")  # 写入列表最大值及所在的索引 
+	            utils.printRd("\n",txtFullPath,"a+")
+	        return 0
+
 if __name__ == "__main__":
     test()
