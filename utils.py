@@ -100,6 +100,16 @@ class DataEnhance():
         img = img.point(lambda i : i * light_factor)
         return img
 
+    def randomRotate(self,img):
+        """
+       function:对img进行随机360度旋转
+       parameters:
+           img:待进行随机旋转图片
+        """
+        randNum = random.randint(0, 360)  # 生成随机数（0~360范围）  
+        img = img.rotate(angle=randNum, resample=0, expand=0)
+        return img
+
     def dataEnhance(self,img,rate):
         """
        function:
@@ -111,6 +121,7 @@ class DataEnhance():
         x = self.randomFlipLeftRight(x)  # 随机水平翻转
         x = self.randomFlipUpDown(x)  # 随机垂直翻转
         x = self.randomLightTrans(x)  # 随机光强变换
+        x = self.randomRotate(x)  # 随机角度旋转
         return x
     
     def centerImageCrop(self,img,rate):
