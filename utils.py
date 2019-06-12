@@ -404,7 +404,7 @@ class utils():
         print("f1值： "+str(round(f1_score_tmp,5))) 
         return accuracy,precision_tmp,recall_score_tmp,f1_score_tmp
     
-  def analyResult_confusion_matrix(self,confusion_matrix):
+  	def analyResult_confusion_matrix(self,confusion_matrix):
         """
        function:
            根据混淆矩阵计算：准确率、精确率、召回率、F1分数等。

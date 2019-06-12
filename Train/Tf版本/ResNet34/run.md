@@ -158,6 +158,6 @@ def trainFun(utils,X_train,y_train,X_train_evalua,y_train_evalua,dataenhance,reD
 reDir = cfg0.train_reDir
 utils_ = utils.utils()
 dataenhance = utils.DataEnhance(image_h = 112,image_w = 112)
-trainFun(utils_,dataenhance,reDir)
+trainFun(utils_,X_train,y_train,X_train_evalua,y_train_evalua,dataenhance,reDir)
 ```
 

@@ -8,7 +8,7 @@ from IPython.display import display_html
 from keras import backend as K
 import Config as cfg0
 
-def trainFun(model,utils,dataenhance,reDir='info/info.txt'):
+def trainFun(model,utils,X_train,y_train,X_train_evalua,y_train_evalua,dataenhance,reDir='info/info.txt'):
     time_total = 0
     utils.printRd("",reDir,"w+")  # 清空重定向文件 
     # tf.reset_default_graph()    # 清空运行图
@@ -140,8 +140,8 @@ def trainFun(model,utils,dataenhance,reDir='info/info.txt'):
 
 ```
 reDir = cfg0.train_reDir
-utils_ = utils.utils()
-dataenhance = utils.DataEnhance(image_h = 112,image_w = 112)
-trainFun(utils_,dataenhance,reDir)
+dataenhance = utils.DataEnhance(image_h = 224,image_w = 224)
+model = Build.MobileNet_V2().build()
+trainFun(model,utils_,X_train,y_train,X_train_evalua,y_train_evalua,dataenhance,reDir)
 ```
 
