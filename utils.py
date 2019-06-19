@@ -242,10 +242,10 @@ class utils():
         resized_img = skimage.transform.resize(crop_img, (224, 224))  # resize to 224, 224
         return resized_img
     
-    def onehot2realLabel(self,probs,trainCountSample=None):
+    def onehot2realLabel(self,probs_,trainCountSample=None):
         """
        function:
-           probs是一个列表，其包含的元素prob是形式上类似于onehot形式的模型预测结果，
+           probs_是一个列表，其包含的元素prob是形式上类似于onehot形式的模型预测结果，
            该方法依次对probs每一个元素进行如下处理：
                a.首先对prob进行训练集类别数量均衡处理
                b.然后求均衡结果中最大值所在的索引下标
@@ -253,6 +253,7 @@ class utils():
            probs:形如onehot形式的模型预测结果所构成的列表
            trainCountSample:训练集中各类别样本的数量，形如[11,222,334]
         """
+        probs = list(probs_)[:]  # 深拷贝
         # 首先进行训练集各类别数量均衡处理 
         if trainCountSample!=None:
             assert len(probs)>0, "onehot2realLabel输入空列表"
