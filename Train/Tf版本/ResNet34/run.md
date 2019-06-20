@@ -17,9 +17,9 @@ def trainFun(utils,X_train,y_train,X_train_evalua,y_train_evalua,dataenhance,reD
     model = Build.AkinVgg(class_num=3,dropout_rate=cfg0.dropout_rate)    
     
     # 构造正则化损失函数
-    cost = model.cost  # 基本的交叉熵损失函数
-    l2_loss = tf.add_n([tf.nn.l2_loss(var) for var in tf.trainable_variables()])   # L2正则化  
+    cost = model.cost  # 基本的交叉熵损失函数  
     if cfg0.weight_decay_rate!=None:
+    	l2_loss = tf.add_n([tf.nn.l2_loss(var) for var in tf.trainable_variables()])   # L2正则化
         cost = cost + l2_loss*cfg0.weight_decay_rate 
 
     # 表示训练多少个batch对应一epoch 
