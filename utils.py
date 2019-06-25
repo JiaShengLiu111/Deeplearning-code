@@ -474,8 +474,8 @@ class utils():
             flag = 0  # 标识value是否能够在labels中找到相应的标签
             for j in range(len(labels)):
                 if value.find(labels[j])>=0:
-                    value_y = [0]*len(labels)  # 生成one-hot标签
-                    value_y[j] = 1
+                    value_y = [0.]*len(labels)  # 生成one-hot标签
+                    value_y[j] = 1.
                     y.append(value_y)
                     flag=1
                     break
