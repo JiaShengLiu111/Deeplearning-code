@@ -24,6 +24,7 @@ from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import train_test_split 
 import os
 from keras import backend as K
+import copy
 
 class DataEnhance():
     """
@@ -253,7 +254,9 @@ class utils():
            probs:形如onehot形式的模型预测结果所构成的列表
            trainCountSample:训练集中各类别样本的数量，形如[11,222,334]
         """
-        probs = list(probs_)[:]  # 深拷贝
+        # probs = list(probs_)[:]  # 深拷贝
+        probs = copy.deepcopy(probs_)  # 深拷贝（列表切片仅仅是浅拷贝）
+
         # 首先进行训练集各类别数量均衡处理 
         if trainCountSample!=None:
             assert len(probs)>0, "onehot2realLabel输入空列表"
