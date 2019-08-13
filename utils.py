@@ -472,7 +472,7 @@ class utils():
             统计数据集类别数量分布
         parameters:
             inputs:样本路径列表
-            labels:类别标签列表，长度等于分类类别数
+            labels:类别标签列表，长度等于分类类别数（每一个节点都是一个列表，表示组合类别）
         """
         result = []
         for i in range(len(labels)):
@@ -481,14 +481,19 @@ class utils():
             value = inputs[i]
             flag = 0  # 标识value是否能够在labels中找到相应的标签
             for j in range(len(labels)):
-                if value.find(labels[j])>=0:
+                # 判断value（字符串）中是否包含labels[j]（列表）中的某一节点
+                flag2 = 0
+                for k in range(len(labels[j])):
+                    if value.find(labels[j][k])>=0:
+                        flag2 = 1
+                if flag2==1:
                     result[j]=result[j]+1
                     flag=1
                     break
             assert flag!=0, "countSample函数中出现了无法解决的bug！"  # 表示value无法找到相应的标签
         # 打印样本统计信息
         for i in range(len(labels)):
-            print("类别"+labels[i]+"样本数为：\t"+str(result[i]))
+            print("类别"+str(labels[i])+"样本数为：\t"+str(result[i]))
         print("\n")
         return result
     
@@ -498,16 +503,22 @@ class utils():
             为样本生成one-hot标签
         parameters:
             inputs:样本路径列表
-            labels:类别标签列表，长度等于分类类别数
+            labels:类别标签列表，长度等于分类类别数（每一个节点都是一个列表，表示组合类别）
         """
         y = []
         for i in range(len(inputs)):
             value = inputs[i]
             flag = 0  # 标识value是否能够在labels中找到相应的标签
             for j in range(len(labels)):
-                if value.find(labels[j])>=0:
-                    value_y = [0.]*len(labels)  # 生成one-hot标签
-                    value_y[j] = 1.
+                # 判断value（字符串）中是否包含labels[j]（列表）中的某一节点
+                flag2 = 0
+                for k in range(len(labels[j])):
+                    if value.find(labels[j][k])>=0:
+                        flag2 = 1
+                # 为value生成标签
+                if flag2==1:
+                    value_y = [0]*len(labels)  # 生成one-hot标签
+                    value_y[j] = 1
                     y.append(value_y)
                     flag=1
                     break
@@ -553,11 +564,19 @@ class utils():
             返回所有子目录labels[x]下所有文件的路径
         parameter:
             filepath:表示父目录
-            labels:表示子目录列表
+            labels:类别标签列表，长度等于分类类别数（每一个节点都是一个列表，表示组合类别）
         """
+        labels_copy = copy.deepcopy(labels)
+        # 将二维列表拆分为一维列表
+        labels_tmp = []
+        for i in range(len(labels_copy)):
+            value = labels_copy[i]
+            for j in range(len(value)):
+                labels_tmp.append(value[j])
+        labels_copy = labels_tmp
         result = []
-        for i in range(len(labels)):  # 依次读取每一个类别的样本路径
-            label_name = labels[i]
+        for i in range(len(labels_copy)):  # 依次读取每一个类别的样本路径
+            label_name = labels_copy[i]
             label_path = filepath+label_name
             allfile_name = os.listdir(label_path)  # 获取该类别所有样本名称
             allfile_fullpath = [os.path.join(label_path,allfile_name[i]) for i in range(len(allfile_name))]  # 该类别所有样本全路径
