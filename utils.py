@@ -62,6 +62,35 @@ class DataEnhance():
         crop_img = img.crop(box)   
         return crop_img
 
+    def centerImageCrop_SizeNormal(self,img,L):
+        """
+       function: 
+           截取一张图片最中间的ROI图，边长为L(注意L的长度可以大于img的长或宽)，即：
+           以一个边长为L的正方形（原始像素值为255）去截取img，且保证img和该正方形中心重合，正方形和img相互重叠的区域被重叠区域像素值替换\
+           ，正方形其它像素值保持不变。——》唯一的目的就是对img长宽进行归一化（归一化为L×L的正方形）
+       parameters:
+           img:待截取图像（img长宽可能不相等）
+           L:截取的图片的边长
+       return:待返回图像crop_img
+       参考网址：
+       1、修改Image像素值：https://blog.csdn.net/zong596568821xp/article/details/83586530
+       2、截取图片：https://pillow.readthedocs.io/en/3.0.x/reference/Image.html?highlight=crop#PIL.Image.Image.crop
+        """
+        length = np.array(img).shape[1]
+        width = np.array(img).shape[0] 
+        # 生成crop_img图片左上角坐标
+        yy = int((length-L)/2)
+        xx = int((width-L)/2)
+        box = (yy,xx,yy+L,xx+L)  # 根据box截取图像
+        crop_img = img.crop(box)
+        # 修改图像像素值（将像素值为0的修改为255）
+        for x in range(crop_img.size[0]):
+            for y in range(crop_img.size[1]):
+                r,g,b = crop_img.getpixel((x,y))
+                if r==0 and g==0 and b==0:
+                    crop_img.putpixel((x,y),(255,255,255))
+        return crop_img
+
     def randomFlipLeftRight(self,img):    
         """
        function:
