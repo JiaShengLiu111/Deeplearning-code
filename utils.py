@@ -25,6 +25,7 @@ from sklearn.model_selection import train_test_split
 import os
 from keras import backend as K
 import copy
+import gubby
 
 class DataEnhance():
     """
@@ -41,6 +42,10 @@ class DataEnhance():
         self.image_h = image_h
         self.image_w = image_w
         self.crop_rate = crop_rate
+
+        self.heapy = guppy.hpy()
+        self.heapy.setref()
+        self.timesOfshowPerformOrCostCurve = 0
         pass
 
     def randomCrop(self,img,rate):     
@@ -287,6 +292,9 @@ class utils():
            names:一维列表，和lists中的元素一一对应，表示lists中某一维度数据所表示的含义。
            picFullPath:绘制的曲线的保存路径。
         """
+        if self.timesOfshowPerformOrCostCurve % 100 == 0:
+        	# 用于解决Matplotlib循环生成保存图片导致的内存泄漏问题，参考至：https://gist.github.com/astrofrog/824941
+            h = self.heapy.heap()
         assert len(lists)==len(names),"showPerformOrCostCurve中数据的长度和标签的长度不相等"
         for i in range(len(lists)):  # 依次对lists中的每一维数据进行处理
             # 获取某一维数据的值和名称
@@ -300,6 +308,8 @@ class utils():
         plt.savefig(picFullPath)  # 保存图片
         plt.clf()  
         plt.close() 
+        self.timesOfshowPerformOrCostCurve+=1
+
 
     def predicts(self,sess,sess_op,inputs_placeholder,is_training_placeholder,X_input,batch_size,dataenhance,reDir):
         """
