@@ -67,6 +67,35 @@ class DataEnhance():
         crop_img = img.crop(box)   
         return crop_img
 
+    def centerImageCrop_SizeNormal(self,img,L):
+        """
+       function: 
+           截取一张图片最中间的ROI图，边长为L(注意L的长度可以大于img的长或宽)，即：
+           以一个边长为L的正方形（原始像素值为255）去截取img，且保证img和该正方形中心重合，正方形和img相互重叠的区域被重叠区域像素值替换\
+           ，正方形其它像素值保持不变。——》唯一的目的就是对img长宽进行归一化（归一化为L×L的正方形）
+       parameters:
+           img:待截取图像（img长宽可能不相等）
+           L:截取的图片的边长
+       return:待返回图像crop_img
+       参考网址：
+       1、修改Image像素值：https://blog.csdn.net/zong596568821xp/article/details/83586530
+       2、截取图片：https://pillow.readthedocs.io/en/3.0.x/reference/Image.html?highlight=crop#PIL.Image.Image.crop
+        """
+        length = np.array(img).shape[1]
+        width = np.array(img).shape[0] 
+        # 生成crop_img图片左上角坐标
+        yy = int((length-L)/2)
+        xx = int((width-L)/2)
+        box = (yy,xx,yy+L,xx+L)  # 根据box截取图像
+        crop_img = img.crop(box)
+        # 修改图像像素值（将像素值为0的修改为255）
+        for x in range(crop_img.size[0]):
+            for y in range(crop_img.size[1]):
+                r,g,b = crop_img.getpixel((x,y))
+                if r==0 and g==0 and b==0:
+                    crop_img.putpixel((x,y),(255,255,255))
+        return crop_img
+
     def randomFlipLeftRight(self,img):    
         """
        function:
@@ -453,7 +482,7 @@ class utils():
             统计数据集类别数量分布
         parameters:
             inputs:样本路径列表
-            labels:类别标签列表，长度等于分类类别数
+            labels:类别标签列表，长度等于分类类别数（每一个节点都是一个列表，表示组合类别）
         """
         result = []
         for i in range(len(labels)):
@@ -462,14 +491,19 @@ class utils():
             value = inputs[i]
             flag = 0  # 标识value是否能够在labels中找到相应的标签
             for j in range(len(labels)):
-                if value.find(labels[j])>=0:
+                # 判断value（字符串）中是否包含labels[j]（列表）中的某一节点
+                flag2 = 0
+                for k in range(len(labels[j])):
+                    if value.find(labels[j][k])>=0:
+                        flag2 = 1
+                if flag2==1:
                     result[j]=result[j]+1
                     flag=1
                     break
             assert flag!=0, "countSample函数中出现了无法解决的bug！"  # 表示value无法找到相应的标签
         # 打印样本统计信息
         for i in range(len(labels)):
-            print("类别"+labels[i]+"样本数为：\t"+str(result[i]))
+            print("类别"+str(labels[i])+"样本数为：\t"+str(result[i]))
         print("\n")
         return result
     
@@ -479,16 +513,22 @@ class utils():
             为样本生成one-hot标签
         parameters:
             inputs:样本路径列表
-            labels:类别标签列表，长度等于分类类别数
+            labels:类别标签列表，长度等于分类类别数（每一个节点都是一个列表，表示组合类别）
         """
         y = []
         for i in range(len(inputs)):
             value = inputs[i]
             flag = 0  # 标识value是否能够在labels中找到相应的标签
             for j in range(len(labels)):
-                if value.find(labels[j])>=0:
-                    value_y = [0.]*len(labels)  # 生成one-hot标签
-                    value_y[j] = 1.
+                # 判断value（字符串）中是否包含labels[j]（列表）中的某一节点
+                flag2 = 0
+                for k in range(len(labels[j])):
+                    if value.find(labels[j][k])>=0:
+                        flag2 = 1
+                # 为value生成标签
+                if flag2==1:
+                    value_y = [0]*len(labels)  # 生成one-hot标签
+                    value_y[j] = 1
                     y.append(value_y)
                     flag=1
                     break
@@ -534,11 +574,19 @@ class utils():
             返回所有子目录labels[x]下所有文件的路径
         parameter:
             filepath:表示父目录
-            labels:表示子目录列表
+            labels:类别标签列表，长度等于分类类别数（每一个节点都是一个列表，表示组合类别）
         """
+        labels_copy = copy.deepcopy(labels)
+        # 将二维列表拆分为一维列表
+        labels_tmp = []
+        for i in range(len(labels_copy)):
+            value = labels_copy[i]
+            for j in range(len(value)):
+                labels_tmp.append(value[j])
+        labels_copy = labels_tmp
         result = []
-        for i in range(len(labels)):  # 依次读取每一个类别的样本路径
-            label_name = labels[i]
+        for i in range(len(labels_copy)):  # 依次读取每一个类别的样本路径
+            label_name = labels_copy[i]
             label_path = filepath+label_name
             allfile_name = os.listdir(label_path)  # 获取该类别所有样本名称
             allfile_fullpath = [os.path.join(label_path,allfile_name[i]) for i in range(len(allfile_name))]  # 该类别所有样本全路径

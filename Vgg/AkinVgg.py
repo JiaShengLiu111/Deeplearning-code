@@ -22,7 +22,7 @@ class AkinVgg:
     """
     the network similar to Vgg
     """
-    def __init__(self,class_num,width_multiplier=1,dropout_rate=0.2):
+    def __init__(self,class_num,dropout_rate=0.2):
         """
         parameters:
            inputs:the input of the network
@@ -31,8 +31,7 @@ class AkinVgg:
            dropout_rate:dropout rate
         """ 
         self.class_num = class_num
-        self.dropout_rate = dropout_rate
-        self.width_multiplier = width_multiplier
+        self.dropout_rate = dropout_rate 
         
         # construct placeholder
         self.inputs = tf.placeholder(tf.float32, [None, 112, 112, 3])  # the input of the network
