@@ -25,7 +25,7 @@ from sklearn.model_selection import train_test_split
 import os
 from keras import backend as K
 import copy
-import gubby
+import guppy
 
 class DataEnhance():
     """
@@ -41,11 +41,7 @@ class DataEnhance():
         """
         self.image_h = image_h
         self.image_w = image_w
-        self.crop_rate = crop_rate
-
-        self.heapy = guppy.hpy()
-        self.heapy.setref()
-        self.timesOfshowPerformOrCostCurve = 0
+        self.crop_rate = crop_rate 
         pass
 
     def randomCrop(self,img,rate):     
@@ -128,7 +124,6 @@ class DataEnhance():
         """
         function:对img进行随机光强变换
         parameters:待处理图片
-
         """
         light_factors = [0.75 + i * 0.05 for i in range(10)]
         light_factor = random.choice(light_factors)
@@ -245,6 +240,9 @@ class utils():
     读取图片、调用模型进行预测、计算样本真实标签、绘制准确率/损失函数变化曲线等。
     """
     def __init__(self): 
+        self.heapy = guppy.hpy()
+        self.heapy.setref()
+        self.timesOfshowPerformOrCostCurve = 0
         pass
     
     def printRd(self,value,filepath='info/info.txt',mode="a+"):  
@@ -322,7 +320,7 @@ class utils():
            picFullPath:绘制的曲线的保存路径。
         """
         if self.timesOfshowPerformOrCostCurve % 100 == 0:
-        	# 用于解决Matplotlib循环生成保存图片导致的内存泄漏问题，参考至：https://gist.github.com/astrofrog/824941
+        # 用于解决Matplotlib循环生成保存图片导致的内存泄漏问题，参考至：https://gist.github.com/astrofrog/824941
             h = self.heapy.heap()
         assert len(lists)==len(names),"showPerformOrCostCurve中数据的长度和标签的长度不相等"
         for i in range(len(lists)):  # 依次对lists中的每一维数据进行处理
@@ -447,7 +445,7 @@ class utils():
         print("f1值： "+str(round(f1_score_tmp,5))) 
         return accuracy,precision_tmp,recall_score_tmp,f1_score_tmp
     
-  	def analyResult_confusion_matrix(self,confusion_matrix):
+    def analyResult_confusion_matrix(self,confusion_matrix):
         """
        function:
            根据混淆矩阵计算：准确率、精确率、召回率、F1分数等。
